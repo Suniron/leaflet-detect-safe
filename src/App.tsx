@@ -96,13 +96,13 @@ const ReportMarker: React.FC<{ position: LatLng }> = ({ position }) => (
   />
 );
 
-const App: React.FC = () => {
+const Map: React.FC = () => {
   const [userPosition, setUserPosition] = useState<LatLng>();
   const [reportedPositions, setMarkersPositions] =
     useState<LatLng[]>(fakeMarkersPositions);
 
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "95vh" }}>
+    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100%" }}>
       {/* Récupérer le style de la carte: */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -112,7 +112,9 @@ const App: React.FC = () => {
       {/* Afficher la position de l'utilisateur: */}
       <UserLocation
         onUpdatePosition={(newPosition) => setUserPosition(newPosition)}
-        sendReport={(reportedPosition) =>setMarkersPositions([...reportedPositions, reportedPosition])}
+        sendReport={(reportedPosition) =>
+          setMarkersPositions([...reportedPositions, reportedPosition])
+        }
       />
 
       {/* Afficher la zone de sécurité uniquement si la position de l'utilisateur est définie: */}
@@ -129,6 +131,27 @@ const App: React.FC = () => {
         <ReportMarker position={reportedPosition} />
       ))}
     </MapContainer>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <div>
+      <p style={{ fontFamily: 'system-ui', fontSize: 20, margin:0 }}>
+        I made this <b>very</b> basic (😅) project to explain some concepts to a friend 🤓🥸. You can
+        check the code of this project{" "}
+        <a
+          href="https://github.com/Suniron/leaflet-detect-safe"
+          target="_blank"
+          rel="noreferrer"
+        >
+          on my Github
+        </a>{" "}.
+      </p>
+      <div style={{ height: "90vh" }}>
+        <Map />
+      </div>
+    </div>
   );
 };
 
