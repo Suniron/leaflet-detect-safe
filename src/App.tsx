@@ -6,7 +6,6 @@ import {
   Popup,
   useMapEvents,
   Circle,
-  useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L, { LatLng } from "leaflet";
