@@ -96,58 +96,91 @@ const ReportMarker: React.FC<{ position: LatLng }> = ({ position }) => (
   />
 );
 
+const SafeDistanceSelector: React.FC<{
+  updateSafeDistance: (newSafeDistance: number) => void;
+}> = ({ updateSafeDistance }) => {
+  return (
+    <div style={{ fontSize: 22 }}>
+      <label htmlFor="distance-select">
+        Choose a safe distance to keep you safe:{" "}
+      </label>
+      <select
+        style={{ fontSize: "large" }}
+        id="distance-select"
+        onChange={(e) => updateSafeDistance(Number(e.target.value))}
+      >
+        <option value="100">100m</option>
+        <option value="150">200m</option>
+        <option value="300">300m</option>
+        <option value="500">500m</option>
+        <option value="1000">1000m</option>
+      </select>
+    </div>
+  );
+};
+
 const Map: React.FC = () => {
   const [userPosition, setUserPosition] = useState<LatLng>();
   const [reportedPositions, setMarkersPositions] =
     useState<LatLng[]>(fakeMarkersPositions);
+  const [safeDistance, setSafeDistance] = useState(100);
 
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100%" }}>
-      {/* Récupérer le style de la carte: */}
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-
-      {/* Afficher la position de l'utilisateur: */}
-      <UserLocation
-        onUpdatePosition={(newPosition) => setUserPosition(newPosition)}
-        sendReport={(reportedPosition) =>
-          setMarkersPositions([...reportedPositions, reportedPosition])
-        }
-      />
-
-      {/* Afficher la zone de sécurité uniquement si la position de l'utilisateur est définie: */}
-      {userPosition && (
-        <UserSafeArea
-          userPosition={userPosition} // TODO: à gérer dans le Context
-          distanceToCheck={150}
-          reportedPositions={reportedPositions} // TODO: à gérer dans le Context
+    <>
+      <SafeDistanceSelector updateSafeDistance={setSafeDistance}/>
+      <MapContainer
+        center={[51.505, -0.09]}
+        zoom={13}
+        style={{ height: "100%" }}
+      >
+        {/* Récupérer le style de la carte: */}
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      )}
 
-      {/* Afficher tous les signalements: */}
-      {reportedPositions.map((reportedPosition) => (
-        <ReportMarker position={reportedPosition} />
-      ))}
-    </MapContainer>
+        {/* Afficher la position de l'utilisateur: */}
+        <UserLocation
+          onUpdatePosition={(newPosition) => setUserPosition(newPosition)}
+          sendReport={(reportedPosition) =>
+            setMarkersPositions([...reportedPositions, reportedPosition])
+          }
+        />
+
+        {/* Afficher la zone de sécurité uniquement si la position de l'utilisateur est définie: */}
+        {userPosition && (
+          <UserSafeArea
+            userPosition={userPosition} // TODO: à gérer dans le Context
+            distanceToCheck={safeDistance}
+            reportedPositions={reportedPositions} // TODO: à gérer dans le Context
+          />
+        )}
+
+        {/* Afficher tous les signalements: */}
+        {reportedPositions.map((reportedPosition) => (
+          <ReportMarker position={reportedPosition} />
+        ))}
+      </MapContainer>
+    </>
   );
 };
 
 const App: React.FC = () => {
   return (
     <div>
-      <p style={{ fontFamily: 'system-ui', fontSize: 20, margin:0 }}>
-        I made this <b>very</b> basic (😅) project to explain some concepts to a friend 🤓🥸. You can
-        check the code of this project{" "}
+      <p style={{ fontFamily: "system-ui", fontSize: 20, margin: 0 }}>
+        I made this <b>very</b> basic (😅) project to explain some concepts to a
+        friend 🤓🥸. You can check the code of this project{" "}
         <a
           href="https://github.com/Suniron/leaflet-detect-safe"
           target="_blank"
           rel="noreferrer"
         >
           on my Github
-        </a>{" "}.
+        </a>{" "}
+        .
       </p>
+
       <div style={{ height: "90vh" }}>
         <Map />
       </div>
